@@ -1,2 +1,3 @@
 # GeneDriveSimulations
-Simulating threshold-dependent gene drives for population suppression in diamondback moths.
+## **Project Overview**
+This project simulates threshold-dependent gene drives for suppressing populations of diamondback moths (*Plutella xylostella*)

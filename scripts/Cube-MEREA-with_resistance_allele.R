@@ -36,7 +36,7 @@
 #' @return Named list containing the inheritance cube, transition matrix, genotypes, wild-type allele,
 #' and all genotype-specific parameters.
 #' @export
-cubeMEREA <- function(rM = 0, rW = 0, Teff = 1.0, eta = NULL, phi = NULL,
+cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
                       omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
   
   ## safety checks
@@ -58,13 +58,14 @@ cubeMEREA <- function(rM = 0, rW = 0, Teff = 1.0, eta = NULL, phi = NULL,
   #later: will need to specify sex-specific alleles
   
   #remember: female on the left and male on the right
-  tMatrix['ZW','ZZ', c('ZW', 'ZZ')] <- #100% wildtype #example of explicit assigning syntax #mathemetical outcomes come after function arrow and are separated by commas
+  tMatrix['ZW','ZZ', c('ZW', 'ZZ', )] <- c(0.5, 0.5)
+    #100% wildtype #example of explicit assigning syntax #mathemetical outcomes come after function arrow and are separated by commas
     
-  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW')] <-
-  tMatrix['ZW','MM', c('MZ', 'MW')] <-
-  tMatrix['ZW','MR', c('MZ', 'RZ', 'MW', 'RW')] <-
+  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW', 'RZ', 'RW')] <- c(1-rM,1,1-rM,1,rM,rM)/4
+  tMatrix['ZW','MM', c('MZ', 'MW', 'RZ', 'RW')] <- c((1-rM)^2, (1-rM)^2, (rM*(1-rM))+rM, (rM*(1-rM))+rM)/2 #c((1-rM)^2, (1-rM)^2, 1-((1-rM)^2), 1-((1-rM)^2))/2
+  tMatrix['ZW','MR', c('MZ', 'RZ', 'MW', 'RW')] <- c(1-rM,(1-rM)+rM*2,1-rM,(1-rM)+rM*2)/4
   tMatrix['ZW','RZ', c('ZZ', 'RZ', 'ZW', 'RW')] <-
-  tMatrix['ZW','RR', c('RZ', 'RW')] <-
+  tMatrix['ZW','RR', c('RZ', 'RW')] <- c(0.5, 0.5)
   
   tMatrix['MW','ZZ', c('MZ', 'ZW')] <-
   tMatrix['MW','MZ', c('MW', 'MM', 'MZ')] <-

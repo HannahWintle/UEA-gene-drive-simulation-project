@@ -59,12 +59,12 @@ cubeMEREA <- function(rM = 0, rW = 0, Teff = 1.0, eta = NULL, phi = NULL,
   #remember: female on the left and male on the right
   tMatrix['ZW','ZZ', c('ZW', 'ZZ')] <- #100% wildtype #example of explicit assigning syntax #mathemetical outcomes come after function arrow and are separated by commas
   
-  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW')]
-  tMatrix['ZW','MM', c('MZ', 'MW')]
+  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW')] <-
+  tMatrix['ZW','MM', c('MZ', 'MW')] <-
   
-  tMatrix['MW','ZZ', c('MZ', 'ZW')]
-  tMatrix['MW','MZ', c('MW', 'MM', 'MZ')]
-  tMatrix['MW','MM', c('MM', 'MW')]
+  tMatrix['MW','ZZ', c('MZ', 'ZW')] <-
+  tMatrix['MW','MZ', c('MW', 'MM', 'MZ')] <-
+  tMatrix['MW','MM', c('MM', 'MW')] <-
   
   ## set the other half of the matrix
   # Boolean matrix for subsetting, used several times

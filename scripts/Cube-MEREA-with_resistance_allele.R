@@ -71,14 +71,14 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   tMatrix['MW','ZZ', c('MZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
   tMatrix['MW','MZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
   tMatrix['MW','MM', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MW','MR', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1 - rM)^2, (1 - rM)*(1 + 2*rM), (1 - rM), (1 + rM), rM*(1 + rM))/4
-  tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1 - rM), (1 - rM), 1, 1, rM, rM)/4
-  tMatrix['MW','RR', c('MR', 'RW', 'RR')] <- c((1 - rM), 1, rM)/2
+  tMatrix['MW','MR', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
+  tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
+  tMatrix['MW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
   
   tMatrix['RW','ZZ', c('RZ', 'ZW',)] <- c(1, 1)/2
-  tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW', 'RR', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM)/4
-  tMatrix['RW','MM', c('MR', 'MW', 'RR', 'RW')] <- c((1 - rM), (1 - rM), rM, rM)/2
-  tMatrix['RW','MR', c('RW', 'MR', 'RR', 'MW')] <- c((1 + rM), (1 - rM), (1 + rM), (1 - rM))/4
+  tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW', 'RR', 'RW')] <- c((1-rM), 1, (1-rM), 1, rM, rM)/4
+  tMatrix['RW','MM', c('MR', 'MW', 'RR', 'RW')] <- c((1-rM), (1-rM), rM, rM)/2
+  tMatrix['RW','MR', c('RW', 'MR', 'RR', 'MW')] <- c((1+rM), (1-rM), (1+rM), (1-rM))/4
   tMatrix['RW','RZ', c('RR', 'RZ', 'RW', 'ZW')] <- c(1, 1, 1, 1)/4
   tMatrix['RW','RR', c('RR', 'RW')] <- c(1, 1)/2
   

@@ -19,7 +19,8 @@
 #' system was first discovered in flour beetles. It biases inheritance by expressing
 #' a maternal toxin such that offspring die unless they express a zygotic antidote. \cr
 #' This drive has 3 alleles at 1 locus:
-#'  * W: Wild-type allele
+#'  * ZZ: Wild-type male
+#'  * ZW: Wild-type female
 #'  * M: MEREA allele
 #'  * R: Resistance allele
 #'
@@ -47,7 +48,7 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   
   ## define matrices
   ## Matrix Dimensions Key: [femaleGenotype,maleGenotype,offspringGenotype]
-  gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW', 'RW', 'RZ', 'MR', 'RR') #changed genotypes to merea alleles #this is every possible genotype #took out resistant alleles
+  gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW', 'RW', 'RZ', 'MR', 'RR') #changed genotypes to merea alleles #this is every possible genotype
   size <- length(gtype) #because I use it several times
   tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix
   
@@ -58,28 +59,28 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   #later: will need to specify sex-specific alleles
   
   #remember: female on the left and male on the right
-  tMatrix['ZW','ZZ', c('ZW', 'ZZ', )] <- c(0.5, 0.5)
-    #100% wildtype #example of explicit assigning syntax #mathemetical outcomes come after function arrow and are separated by commas
+  tMatrix['ZW','ZZ', c('ZW', 'ZZ', )] <- c(1, 1)/2
+    #100% wildtype #example of explicit assigning syntax #mathematical outcomes come after function arrow and are separated by commas
     
-  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW', 'RZ', 'RW')] <- c(1-rM,1,1-rM,1,rM,rM)/4
-  tMatrix['ZW','MM', c('MZ', 'MW', 'RZ', 'RW')] <- c((1-rM)^2, (1-rM)^2, (rM*(1-rM))+rM, (rM*(1-rM))+rM)/2 #c((1-rM)^2, (1-rM)^2, 1-((1-rM)^2), 1-((1-rM)^2))/2
-  tMatrix['ZW','MR', c('MZ', 'RZ', 'MW', 'RW')] <- c(1-rM,(1-rM)+rM*2,1-rM,(1-rM)+rM*2)/4
-  tMatrix['ZW','RZ', c('ZZ', 'RZ', 'ZW', 'RW')] <-
-  tMatrix['ZW','RR', c('RZ', 'RW')] <- c(0.5, 0.5)
+  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW', 'RZ', 'RW')] <- c(1-rM, 1, 1-rM, 1, rM, rM)/4
+  tMatrix['ZW','MM', c('MZ', 'MW', 'RZ', 'RW')] <- c((1-rM)^2, (1-rM)^2, 1-((1-rM)^2), 1-((1-rM)^2))/2
+  tMatrix['ZW','MR', c('MZ', 'RZ', 'MW', 'RW')] <- c(1-rM, (1-rM)+rM*2, 1-rM, (1-rM)+rM*2)/4
+  tMatrix['ZW','RZ', c('ZZ', 'RZ', 'ZW', 'RW')] <- c(1, 1, 1, 1)/4
+  tMatrix['ZW','RR', c('RZ', 'RW')] <- c(1, 1)/2
   
-  tMatrix['MW','ZZ', c('MZ', 'ZW')] <-
-  tMatrix['MW','MZ', c('MW', 'MM', 'MZ')] <-
-  tMatrix['MW','MM', c('MM', 'MW')] <-
-  tMatrix['MW','MR', c('MM', 'MR', 'MW', 'RW')] <-
-  tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW')] <-
-  tMatrix['MW','RR', c('MR', 'RW')] <-
+  tMatrix['MW','ZZ', c('MZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
+  tMatrix['MW','MZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
+  tMatrix['MW','MM', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
+  tMatrix['MW','MR', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1 - rM)^2, (1 - rM)*(1 + 2*rM), (1 - rM), (1 + rM), rM*(1 + rM))/4
+  tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1 - rM), (1 - rM), 1, 1, rM, rM)/4
+  tMatrix['MW','RR', c('MR', 'RW', 'RR')] <- c((1 - rM), 1, rM)/2
   
-  tMatrix['RW','ZZ', c('RZ', 'ZW')] <-
-  tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW')] <-
-  tMatrix['RW','MM', c('MR', 'MW')] <-
-  tMatrix['RW','MR', c('RW', 'MR', 'RR')] <-
-  tMatrix['RW','RZ', c('RR', 'RZ', 'RW', 'ZW')] <-
-  tMatrix['RW','RR', c('RR', 'RW')] <-
+  tMatrix['RW','ZZ', c('RZ', 'ZW',)] <- c(1, 1)/2
+  tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW', 'RR', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM)/4
+  tMatrix['RW','MM', c('MR', 'MW', 'RR', 'RW')] <- c((1 - rM), (1 - rM), rM, rM)/2
+  tMatrix['RW','MR', c('RW', 'MR', 'RR', 'MW')] <- c((1 + rM), (1 - rM), (1 + rM), (1 - rM))/4
+  tMatrix['RW','RZ', c('RR', 'RZ', 'RW', 'ZW')] <- c(1, 1, 1, 1)/4
+  tMatrix['RW','RR', c('RR', 'RW')] <- c(1, 1)/2
   
   ## set the other half of the matrix
   # Boolean matrix for subsetting, used several times

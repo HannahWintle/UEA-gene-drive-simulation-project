@@ -47,12 +47,12 @@ cubeMEREA <- function(rM = 0, rW = 0, Teff = 1.0, eta = NULL, phi = NULL,
   
   ## define matrices
   ## Matrix Dimensions Key: [femaleGenotype,maleGenotype,offspringGenotype]
-  gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW') #changed genotypes to merea alleles #this is every possible genotype #took out resistant alleles
+  gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW', 'RW', 'RZ', 'MR', 'RR') #changed genotypes to merea alleles #this is every possible genotype #took out resistant alleles
   size <- length(gtype) #because I use it several times
   tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix
   
   ## fill tMatrix with probabilities 
-  #( 'ZW'(female), 'ZZ'(male), 'MZ'(male), 'MM'(male), 'MW'(female)) #Merea is Z-linked #M and Z are both variants of the Z chromosome
+  #( 'ZW'(female), 'ZZ'(male), 'MZ'(male), 'MM'(male), 'MW'(female), 'RW'(female), 'RZ'(male), 'MR'(male), 'RR'(male)) #Merea is Z-linked #M and Z are both variants of the Z chromosome
   #Use explicit syntax
   #explicit pros: can check line by line #explicit cons: risk of typos and will not be assigned to correct genotype #therefore implicit is made to reduce typos and bugs
   #later: will need to specify sex-specific alleles
@@ -60,12 +60,25 @@ cubeMEREA <- function(rM = 0, rW = 0, Teff = 1.0, eta = NULL, phi = NULL,
   #remember: female on the left and male on the right
   tMatrix['ZW','ZZ', c('ZW', 'ZZ')] <- #100% wildtype #example of explicit assigning syntax #mathemetical outcomes come after function arrow and are separated by commas
     
-    tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW')]
-  tMatrix['ZW','MM', c('MZ', 'MW')]
+  tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW')] <-
+  tMatrix['ZW','MM', c('MZ', 'MW')] <-
+  tMatrix['ZW','MR', c('MZ', 'RZ', 'MW', 'RW')] <-
+  tMatrix['ZW','RZ', c('ZZ', 'RZ', 'ZW', 'RW')] <-
+  tMatrix['ZW','RR', c('RZ', 'RW')] <-
   
-  tMatrix['MW','ZZ', c('MZ', 'ZW')]
-  tMatrix['MW','MZ', c('MW', 'MM', 'MZ')]
-  tMatrix['MW','MM', c('MM', 'MW')]
+  tMatrix['MW','ZZ', c('MZ', 'ZW')] <-
+  tMatrix['MW','MZ', c('MW', 'MM', 'MZ')] <-
+  tMatrix['MW','MM', c('MM', 'MW')] <-
+  tMatrix['MW','MR', c('MM', 'MR', 'MW', 'RW')] <-
+  tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW')] <-
+  tMatrix['MW','RR', c('MR', 'RW')] <-
+  
+  tMatrix['RW','ZZ', c('RZ', 'ZW')] <-
+  tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW')] <-
+  tMatrix['RW','MM', c('MR', 'MW')] <-
+  tMatrix['RW','MR', c('RW', 'MR', 'RR')] <-
+  tMatrix['RW','RZ', c('RR', 'RZ', 'RW', 'ZW')] <-
+  tMatrix['RW','RR', c('RR', 'RW')] <-
   
   ## set the other half of the matrix
   # Boolean matrix for subsetting, used several times

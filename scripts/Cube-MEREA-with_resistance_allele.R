@@ -104,11 +104,21 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)
   
   ##sex modifiers
-  #hard code each genotype to be 0 or 1
-  #make named vector of 0s and 1s
-  #write out sexes of genotypes, then write out names
-  #define phi
-  #can check by checking cube$phi
+  #0 is male and 1 is female
+  sexes <- c(
+    "ZW" = 1,  # Female
+    "ZZ" = 0,  # Male
+    "MZ" = 0,  # Male
+    "MM" = 0,  # Male
+    "MW" = 1,  # Female
+    "RW" = 1,  # Female
+    "RZ" = 0,  # Male
+    "MR" = 0,  # Male
+    "RR" = 0   # Male
+  )
+  
+  # Define phi (sex ratio at emergence)
+  phi <- sexes
   
   ## put everything into a labeled list to return
   #need to change wildtype and release type
@@ -117,13 +127,13 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
     tau = viabilityMask,
     genotypesID = gtype,
     genotypesN = size,
-    wildType = c("ZZ", "ZW",)
+    wildType = c("ZZ", "ZW"),
     eta = modifiers$eta,
-    phi = modifiers$phi,
+    phi = phi, #assign sex ratios
     omega = modifiers$omega,
     xiF = modifiers$xiF,
     xiM = modifiers$xiM,
     s = modifiers$s,
-    releaseType = c("MZ", "MW",)
+    releaseType = c("MZ", "MW")
   ))
 }

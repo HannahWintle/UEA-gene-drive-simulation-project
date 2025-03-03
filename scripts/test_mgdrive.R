@@ -15,7 +15,7 @@ outFolder <- "mgdrive/run005"
 # Simulation Parameters
 ####################
 # days to run the simulation
-tMax <- 25
+tMax <- 365
 
 # entomological parameters
 bioParameters <- list(betaK=20, tEgg=5, tLarva=6, tPupa=4, popGrowth=1.175, muAd=0.09)
@@ -33,10 +33,6 @@ sitesNumber <- nrow(moveMat)
 # Mendelian cube with standard (default) parameters
 cube <- cubeMEDEA()
 
-## Safety checks
-if(any(c(Teff) < 0) || any(c(Teff) > 1)){
-  stop("Teff must be a probability between 0 and 1")
-}
 
 ####################
 # Setup releases and batch migration
@@ -50,7 +46,7 @@ patchReleases <- replicate(n=sitesNumber,
 releasesParameters <- list(releasesStart=0,  # Release starts at generation 0
                            releasesNumber=1,  # Single release event
                            releasesInterval=0,
-                           releaseProportion=0.1)
+                           releaseProportion=50)
 
 releasesVector <- generateReleaseVector(driveCube=cube,
                                         releasesParameters=releasesParameters)
@@ -64,58 +60,7 @@ patchReleases[[1]]$femaleReleases <- releasesVector
 batchMigration <- basicBatchMigration(batchProbs=0,
                                       sexProbs=c(.5,.5), numPatches=sitesNumber)
 
-                                      
-####################
-## Define matrices
-####################
-## Matrix Dimensions Key: [femaleGenotype, maleGenotype, offspringGenotype]
-gtype <- c('TT', 'Tt', 'tt')
-size <- length(gtype)
-tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) # transition matrix
 
-## Fill tMatrix with probabilities based on Mendelian inheritance
-# TT x TT -> 100% TT
-tMatrix['TT','TT', 'TT'] <- 1
-
-# TT x Tt -> 50% TT, 50% Tt
-tMatrix['TT','Tt', c('TT', 'Tt')] <- c(0.5, 0.5)
-
-# TT x tt -> 100% Tt
-tMatrix['TT','tt', 'Tt'] <- 1
-
-# Tt x TT -> 50% TT, 50% Tt
-tMatrix['Tt','TT', c('TT', 'Tt')] <- c(0.5, 0.5)
-
-# Tt x Tt -> 25% TT, 50% Tt, 25% tt
-tMatrix['Tt','Tt', c('TT', 'Tt', 'tt')] <- c(0.25, 0.5, 0.25)
-
-# Tt x tt -> 50% Tt, 50% tt
-tMatrix['Tt','tt', c('Tt', 'tt')] <- c(0.5, 0.5)
-
-# tt x TT -> 100% Tt
-tMatrix['tt','TT', 'Tt'] <- 1
-
-# tt x Tt -> 50% Tt, 50% tt
-tMatrix['tt','Tt', c('Tt', 'tt')] <- c(0.5, 0.5)
-
-# tt x tt -> 100% tt
-tMatrix['tt','tt', 'tt'] <- 1
-
-## Set the other half of the matrix (ensures symmetry)
-boolMat <- upper.tri(x = tMatrix[ , ,1], diag = FALSE)
-for(z in 1:size) {
-  tMatrix[ , ,z][boolMat] <- t(tMatrix[ , ,z])[boolMat]
-}
-
-tMatrix[tMatrix < .Machine$double.eps] <- 0 
-
-viabilityMask <- array(data = 1, dim = c(size, size, size), dimnames = list(gtype, gtype, gtype))
-
-## Adjust viability based on genotype interactions
-for(slice in 1:size) {
-  viabilityMask['Tt',slice, ] <- c(1, 1, 1)
-  viabilityMask['tt',slice, ] <- c(1, 1, 1)
-}
 
 ####################
 # Combine parameters and run!

@@ -8,7 +8,7 @@ library(MGDrivE)
 # Output Folder
 ####################
 dir.create("mgdrive")
-outFolder <- "mgdrive/run_MEREA_003"
+outFolder <- "mgdrive/run_MEREA_005"
 
 ####################
 # Simulation Parameters
@@ -45,12 +45,12 @@ patchReleases <- replicate(n=sitesNumber,
 releasesParametersMale <- list(releasesStart=0, # Release starts at generation 0
                                releasesNumber=1, # Single release event 
                                releasesInterval=0,  
-                               releaseProportion=200) #Can tweak male and female releases separately #Adjust threshold testing here
+                               releaseProportion=600) #Can tweak male and female releases separately #Adjust threshold testing here
 
 releasesParametersFemale <- list(releasesStart=0,  
                                  releasesNumber=1,  
                                  releasesInterval=0,  
-                                 releaseProportion=200)  # female release
+                                 releaseProportion=600)  # female release
 
 # Generate release vectors for both sexes
 maleReleasesVector <- generateReleaseVector(driveCube=cube, releasesParameters=releasesParametersMale)

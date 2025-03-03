@@ -93,35 +93,37 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   ## initialize viability mask.
   viabilityMask <- array(data = 1, dim = c(size,size,size), dimnames = list(gtype, gtype, gtype))
   
-  ## fill mother/offspring specific death, then muliply by efficacy of toxin and antidote
-  for(slice in 1:size){
-    viabilityMask[c('WM', 'MR'),slice, ] <- matrix( c( 1-Teff, 1, 1-Teff,1, 1, 1), nrow = 2, ncol = size, byrow = TRUE )
-    viabilityMask['MM',slice, ] <- c( 1-2*Teff+Teff^2, 1, 1-2*Teff+Teff^2, 1, 1, 1)
-  }
-  
   # for loop may be unnecessary
   
   # All offspring of MW females are dead regardless of father
-  viabilityMask['MW',1:9,1:9] <- matrix( rep(1-Teff,size), nrow = 1, ncol = size, byrow = TRUE )
-  # MM offspring always survive, even if born to MW females
-  viabilityMask['MW', 1:9, 'MM'] <- matrix(rep(1, size), nrow = 1, ncol = size, byrow = TRUE)
+  viabilityMask['MW', 1:size, 1:size ] <- matrix( rep(1-Teff,size), nrow = 1, ncol = size, byrow = TRUE )
+  # MW female offspring survive if their offspring is MM
+  viabilityMask['MW', 1:size, 'MM'] <- matrix(rep(1, size), nrow = 1, ncol = size, byrow = TRUE)
   
   ## genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)
   
+  ##sex modifiers
+  #hard code each genotype to be 0 or 1
+  #make named vector of 0s and 1s
+  #write out sexes of genotypes, then write out names
+  #define phi
+  #can check by checking cube$phi
+  
   ## put everything into a labeled list to return
+  #need to change wildtype and release type
   return(list(
     ih = tMatrix,
     tau = viabilityMask,
     genotypesID = gtype,
     genotypesN = size,
-    wildType = "WW",
+    wildType = c("ZZ", "ZW",)
     eta = modifiers$eta,
     phi = modifiers$phi,
     omega = modifiers$omega,
     xiF = modifiers$xiF,
     xiM = modifiers$xiM,
     s = modifiers$s,
-    releaseType = "MM"
+    releaseType = c("MZ", "MW",)
   ))
 }

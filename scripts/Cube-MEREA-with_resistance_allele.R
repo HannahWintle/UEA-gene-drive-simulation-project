@@ -24,8 +24,7 @@
 #'  * M: MEREA allele
 #'  * R: Resistance allele
 #'
-#' @param rM Breakdown of MEDEA allele, no homing/toxin/antidote, M -> R conversion
-#' @param rW De novo resistance generation, W -> R conversion
+#' @param rM Breakdown of MEREA allele, no homing/toxin/antidote, M -> R conversion
 #' @param Teff Efficacy of the toxin
 #' @param eta Genotype-specific mating fitness
 #' @param phi Genotype-specific sex ratio at emergence
@@ -41,7 +40,7 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
                       omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
   
   ## safety checks
-  if(any(c(rM,rW,Teff)<0) || any(c(rM,rW,Teff)>1)){
+  if(any(c(rM, Teff)<0) || any(c(rM, Teff)>1)){
     stop("Parameters are rates.
          0 <= x <= 1")
   }
@@ -59,7 +58,7 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   #later: will need to specify sex-specific alleles
   
   #remember: female on the left and male on the right
-  tMatrix['ZW','ZZ', c('ZW', 'ZZ', )] <- c(1, 1)/2
+  tMatrix['ZW','ZZ', c('ZW', 'ZZ')] <- c(1, 1)/2
     #100% wildtype #example of explicit assigning syntax #mathematical outcomes come after function arrow and are separated by commas
     
   tMatrix['ZW','MZ', c('MZ', 'ZZ', 'MW', 'ZW', 'RZ', 'RW')] <- c(1-rM, 1, 1-rM, 1, rM, rM)/4
@@ -75,7 +74,7 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   tMatrix['MW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
   tMatrix['MW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
   
-  tMatrix['RW','ZZ', c('RZ', 'ZW',)] <- c(1, 1)/2
+  tMatrix['RW','ZZ', c('RZ', 'ZW')] <- c(1, 1)/2
   tMatrix['RW','MZ', c('MR', 'RZ', 'MW', 'ZW', 'RR', 'RW')] <- c((1-rM), 1, (1-rM), 1, rM, rM)/4
   tMatrix['RW','MM', c('MR', 'MW', 'RR', 'RW')] <- c((1-rM), (1-rM), rM, rM)/2
   tMatrix['RW','MR', c('RW', 'MR', 'RR', 'MW')] <- c((1+rM), (1-rM), (1+rM), (1-rM))/4

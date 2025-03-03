@@ -50,7 +50,7 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   ## Matrix Dimensions Key: [femaleGenotype,maleGenotype,offspringGenotype]
   gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW', 'RW', 'RZ', 'MR', 'RR') #changed genotypes to merea alleles #this is every possible genotype
   size <- length(gtype) #because I use it several times
-  tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix
+tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix
   
   ## fill tMatrix with probabilities 
   #( 'ZW'(female), 'ZZ'(male), 'MZ'(male), 'MM'(male), 'MW'(female), 'RW'(female), 'RZ'(male), 'MR'(male), 'RR'(male)) #Merea is Z-linked #M and Z are both variants of the Z chromosome
@@ -99,6 +99,12 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
     viabilityMask['MM',slice, ] <- c( 1-2*Teff+Teff^2, 1, 1-2*Teff+Teff^2, 1, 1, 1)
   }
   
+  # for loop may be unnecessary
+  
+  # All offspring of MW females are dead regardless of father
+  viabilityMask['MW',1:9,1:9] <- matrix( rep(1-Teff,size), nrow = 1, ncol = size, byrow = TRUE )
+  # MM offspring always survive, even if born to MW females
+  viabilityMask['MW', 1:9, 'MM'] <- matrix(rep(1, size), nrow = 1, ncol = size, byrow = TRUE)
   
   ## genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)

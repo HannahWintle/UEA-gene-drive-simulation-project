@@ -159,6 +159,6 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
     xiF = modifiers$xiF,
     xiM = modifiers$xiM,
     s = modifiers$s,
-    releaseType = c("MaMb", "MaMa", "MbMb")
+    releaseType = c("MaMb", "MaMa", "MbMb", "MaW", "MbW")
   ))
 }

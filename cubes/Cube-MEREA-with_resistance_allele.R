@@ -6,36 +6,49 @@
 #   \____/\__,_/_.___/\___/
 #
 #   MGDrivE: Mosquito Gene Drive Explorer
-#   MEDEA
-#   Héctor Sanchez, Jared Bennett, Sean Wu, John Marshall
-#   August 2017
-#   jared_bennett@berkeley.edu
+#   MEREA
+#   Hannah Wintle, Philip Leftwich
+#   February 2025
+#   cnm20syu@uea.ac.uk
+#
+#   Inheritance Cube: MEREA (Maternal Effect RECESSIVE Embryonic Arrest)
+#
+#   This function creates an inheritance cube to model a MEREA drive system.
+#   MEREA functions via a maternal-effect toxin that is deposited into the eggs, 
+#   causing embryonic lethality unless the offspring inherit a zygotic antidote. 
+#   The antidote is only effective when inherited from both parents, making the 
+#   system recessive.
+#
+#   This drive operates with a single allele (MEREA) at one locus.
+#
+#   Male Genotype Key:
+#    * ZZ  : Wild-type male
+#    * MZ  : Male with one MEREA allele
+#    * MM  : Male with two MEREA alleles
+#    * RZ  : Male with resistance allele (no MEREA)
+#    * RM  : Male with resistance + MEREA allele
+#    * RR  : Male with two resistance alleles (wild-type behaviour)
+#
+#   Female Genotype Key:
+#    * ZW  : Wild-type female
+#    * MW  : Female with one MEREA allele
+#    * RW  : Female with resistance allele (no MEREA)
+#
+#' @param rM    Breakdown of MEREA allele, no homing/toxin/antidote, M -> R conversion
+#' @param Teff  Efficacy of the toxin
+#' @param eta   Genotype-specific mating fitness
+#' @param phi   Genotype-specific sex ratio at emergence
+#' @param omega Genotype-specific multiplicative modifier of adult mortality
+#' @param xiF   Genotype-specific female pupatory success
+#' @param xiM   Genotype-specific male pupatory success
+#' @param s     Genotype-specific fractional reduction (increase) in fertility
+#'
+#' @return Named list containing the inheritance cube, transition matrix, 
+#' genotypes, wild-type allele, and all genotype-specific parameters.
+#' @export
 #
 ###############################################################################
 
-#' Inheritance Cube: MEDEA (Maternal Effect Dominant Embryonic Arrest)
-#'
-#' This function creates an inheritance cube to model a MEDEA drive system. This
-#' system was first discovered in flour beetles. It biases inheritance by expressing
-#' a maternal toxin such that offspring die unless they express a zygotic antidote. \cr
-#' This drive has 3 alleles at 1 locus:
-#'  * ZZ: Wild-type male
-#'  * ZW: Wild-type female
-#'  * M: MEREA allele
-#'  * R: Resistance allele
-#'
-#' @param rM Breakdown of MEREA allele, no homing/toxin/antidote, M -> R conversion
-#' @param Teff Efficacy of the toxin
-#' @param eta Genotype-specific mating fitness
-#' @param phi Genotype-specific sex ratio at emergence
-#' @param omega Genotype-specific multiplicative modifier of adult mortality
-#' @param xiF Genotype-specific female pupatory success
-#' @param xiM Genotype-specific male pupatory success
-#' @param s Genotype-specific fractional reduction(increase) in fertility
-#'
-#' @return Named list containing the inheritance cube, transition matrix, genotypes, wild-type allele,
-#' and all genotype-specific parameters.
-#' @export
 cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
                       omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
   

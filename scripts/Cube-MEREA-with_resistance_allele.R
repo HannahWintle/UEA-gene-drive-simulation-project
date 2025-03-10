@@ -83,9 +83,9 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   
   ## set the other half of the matrix
   # Boolean matrix for subsetting, used several times
-  boolMat <- upper.tri(x = tMatrix[ , ,1], diag = FALSE)
+ # boolMat <- upper.tri(x = tMatrix[ , ,1], diag = FALSE)
   # loop over depth, set upper triangle
-  for(z in 1:size){tMatrix[ , ,z][boolMat] <- t(tMatrix[ , ,z])[boolMat]}
+  #for(z in 1:size){tMatrix[ , ,z][boolMat] <- t(tMatrix[ , ,z])[boolMat]}
   
   tMatrix[tMatrix < .Machine$double.eps] <- 0 #protection from underflow errors
   

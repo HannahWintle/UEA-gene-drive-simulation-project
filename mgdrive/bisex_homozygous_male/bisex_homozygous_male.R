@@ -113,9 +113,13 @@ for (i in 1:length(releases)) {
   aggregateFemales(readDir = outFolder, genotypes = cube$genotypesID,
                    remFile = TRUE, verbose = FALSE)
   
-  # Plot output to see effect
+  # Define file path for saving plot
+  plot_file <- file.path(outFolder, paste0("plot_release_", releases[[i]], ".png"))
+  
+  # Save the plot
+  png(filename = plot_file, width = 1200, height = 800)  # Set resolution and size
   plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
+  dev.off()  # Close the PNG device
   
-  print(paste("Simulation completed for release size:", releases[[i]]))
-  
+  print(paste("Simulation and plot saved for release size:", releases[[i]], "at", plot_file))
 }

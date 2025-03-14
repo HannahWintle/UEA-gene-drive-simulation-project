@@ -59,7 +59,7 @@ cubeMEREA <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   }
   
   ## define matrices
-  ## Matrix Dimensions Key: [femaleGenotype,maleGenotype,offspringGenotype]
+  ## Matrix Dimensions Key: [female Genotype, male Genotype, offspring Genotype]
   gtype <- c('ZW', 'ZZ', 'MZ', 'MM', 'MW', 'RW', 'RZ', 'MR', 'RR') #changed genotypes to merea alleles #this is every possible genotype
   size <- length(gtype) #because I use it several times
 tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix

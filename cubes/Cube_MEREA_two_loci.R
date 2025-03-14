@@ -33,8 +33,8 @@
 #    * MbMb    : Male with two Mb alleles
 #    * MaMb    : Male with both Ma and Mb
 #    * RZ      : Male with resistance allele
-#    * RMa     : Male with resistance + Ma
-#    * RMb     : Male with resistance + Mb
+#    * MaR     : Male with resistance + Ma
+#    * MbR     : Male with resistance + Mb
 #    * RR      : Male with two resistance alleles
 #   
 #   Female Genotype Key:
@@ -67,7 +67,7 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   }
   
   ## Define genotype list
-  gtype <- c('ZW', 'ZZ', 'MaZ', 'MbZ', 'MaMb', 'MaMa', 'MbMb', 'RZ', 'RMa', 'RMb', 'RR', 'MaW', 'MbW', 'RW')
+  gtype <- c('ZW', 'ZZ', 'MaZ', 'MbZ', 'MaMb', 'MaMa', 'MbMb', 'RZ', 'MaR', 'MbR', 'RR', 'MaW', 'MbW', 'RW')
   size <- length(gtype)
   
   ## Initialize transition matrix
@@ -76,52 +76,52 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   ## Fill tMatrix with inheritance probabilities
   tMatrix['ZW', 'ZZ', c('ZW', 'ZZ')] <- c(1, 1) / 2  # Wild-type cross
   
-  tMatrix['ZW', 'MaZ', c('MaZ', 'ZZ', 'MaW', 'ZW')] <- c(1-rM, 1, 1-rM, 1) / 4
-  tMatrix['ZW', 'MbZ', c('MbZ', 'ZZ', 'MbW', 'ZW')] <- c(1-rM, 1, 1-rM, 1) / 4
-  tMatrix['ZW', 'MaMa', c('MaZ', 'MbZ', 'MaW', 'MbW')] <- c((1-rM), (1-rM), (1-rM), (1-rM)) / 4
-  tMatrix['ZW', 'MbMb', c('MaZ', 'MbZ', 'MaW', 'MbW')] <- c((1-rM), (1-rM), (1-rM), (1-rM)) / 4
-  tMatrix['ZW', 'MaMb', c('MaZ', 'MbZ', 'MaW', 'MbW')] <- c((1-rM), (1-rM), (1-rM), (1-rM)) / 4
+  tMatrix['ZW', 'MaZ', c('MaZ', 'ZZ', 'MaW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4
+  tMatrix['ZW', 'MbZ', c('MbZ', 'ZZ', 'MbW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4
+  tMatrix['ZW', 'MaMa', c('MaZ', 'MaW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), rM, rM) / 2
+  tMatrix['ZW', 'MbMb', c('MbZ', 'MbW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), rM, rM) / 2
+  tMatrix['ZW', 'MaMb', c('MaZ', 'MbZ', 'MaW', 'MbW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), (1 - rM), (1 - rM), rM, rM) / 4
   tMatrix['ZW', 'RZ', c('ZZ', 'RZ', 'ZW', 'RW')] <- c(1, 1, 1, 1) / 4
-  tMatrix['ZW', 'RMa', c('ZZ', 'RZ', 'ZW', 'RW')] <- c(1, 1, 1, 1) / 4
-  tMatrix['ZW', 'RMb', c('ZZ', 'RZ', 'ZW', 'RW')] <- c(1, 1, 1, 1) / 4
+  tMatrix['ZW', 'MaR', c('MaZ', 'RZ', 'MaW', 'RW')] <- c(1-rM, (1-rM)+rM*2, 1-rM, (1-rM)+rM*2)/4
+  tMatrix['ZW', 'MbR', c('MbZ', 'RZ', 'MbW', 'RW')] <- c(1-rM, (1-rM)+rM*2, 1-rM, (1-rM)+rM*2)/4
   tMatrix['ZW', 'RR', c('RZ', 'RW')] <- c(1, 1) / 2
   
-  tMatrix['MaW','ZZ', c('MZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
-  tMatrix['MaW','MaZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['MaW','MbZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['MaW','MaMa', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MaW','MbMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MaW','MaMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MaW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
-  tMatrix['MaW','RMa', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
-  tMatrix['MaW','RMb', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
-  tMatrix['MaW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
+  tMatrix['MaW','ZZ', c('MaZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
+  tMatrix['MaW','MaZ', c('MaW', 'MaMa', 'MaZ', 'ZW', 'RZ', 'RW', 'RR', 'MaR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
+  tMatrix['MaW','MbZ', c('MbW','MaMb','MaZ','ZW','RZ','RW','RR','MaR','MbR')] <- c((1 - rM), (1 - rM)^2, (1 - rM), 1, rM, rM, rM^2, rM*(1 - rM), rM*(1 - rM)) / 4
+  tMatrix['MaW','MaMa', c('MaMa', 'MaW', 'RR', 'RW', 'MaR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
+  tMatrix['MaW','MbMb', c('MaMb','MbW','RR','MaR','MbR','RW')] <- c((1 - rM)^2, (1 - rM), rM^2, rM*(1 - rM), rM*(1 - rM), rM) / 2
+  tMatrix['MaW','MaMb', c('MaMa', 'MaMb', 'MaW', 'MbW', 'RR', 'RW', 'MaR', 'MbR')] <- c((1 - rM)^2, (1 - rM)^2, (1 - rM), (1 - rM), rM^2, 2*rM, rM*(1 - rM), rM*(1 - rM)) / 4
+  tMatrix['MaW','RZ', c('MaZ', 'MaR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
+  tMatrix['MaW','MaR', c('MaMa', 'MaR', 'MaW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
+  tMatrix['MaW','MbR', c('MaR', 'MaMb', 'MbW', 'RW', 'RR', 'MbR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
+  tMatrix['MaW','RR', c('MaR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
   
-  tMatrix['MbW','ZZ', c('MZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
-  tMatrix['MbW','MaZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['MbW','MbZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['MbW','MaMa', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MbW','MbMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MbW','MaMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['MbW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
-  tMatrix['MbW','RMa', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
-  tMatrix['MbW','RMb', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
+  tMatrix['MbW','ZZ', c('MbZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
+  tMatrix['MbW','MaZ', c('MaMb', 'MbZ', 'MaW', 'RZ', 'ZW', 'RW', 'RR', 'MaR', 'MbR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
+  tMatrix['MbW','MbZ', c('MbW', 'MbMb', 'MbZ', 'ZW', 'RZ', 'RW', 'RR', 'MbR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
+  tMatrix['MbW','MaMa', c('MaMb', 'MaW', 'RR', 'RW', 'MaR', 'MbR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
+  tMatrix['MbW','MbMb', c('MbMb', 'MbW', 'RR', 'RW', 'MbR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
+  tMatrix['MbW','MaMb', c('MaMb', 'MbMb', 'MaW', 'MbW', 'RW', 'MaR', 'MbR', 'RR')] <- c((1 - rM)^2, (1 - rM)^2, (1 - rM), (1 - rM), 2*rM, rM*(1 - rM), 3*rM*(1 - rM), 2*rM^2) / 4
+  tMatrix['MbW','RZ', c('MbZ', 'MbR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
+  tMatrix['MbW','MaR', c('MbR','MaR','RW','MaW','RR','MaMb')] <- c(rM*(1 - rM), (1 + rM)*(1 - rM), rM, (1 - rM), rM^2, (1 - rM)^2)/4
+  tMatrix['MbW','MbR', c('MbMb', 'MbR', 'MbW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
   tMatrix['MbW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
   
-  tMatrix['RW','ZZ', c('MZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2
-  tMatrix['RW','MaZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['RW','MbZ', c('MW', 'MM', 'MZ', 'ZW', 'RZ', 'RW', 'RR', 'MR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4
-  tMatrix['RW','MaMa', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['RW','MbMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['RW','MaMb', c('MM', 'MW', 'RR', 'RW', 'MR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
-  tMatrix['RW','RZ', c('MZ', 'MR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
-  tMatrix['RW','RMa', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
-  tMatrix['RW','RMb', c('MM', 'MR', 'MW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
-  tMatrix['RW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2
+  tMatrix['RW','ZZ', c('RZ', 'ZW')] <- c(1, 1)/2
+  tMatrix['RW','MaZ', c('MaR', 'RZ', 'MaW', 'ZW', 'RR', 'RW')] <- c((1-rM), 1, (1-rM), 1, rM, rM)/4
+  tMatrix['RW','MbZ', c('MbR', 'RZ', 'MbW', 'ZW', 'RR', 'RW')] <- c((1-rM), 1, (1-rM), 1, rM, rM)/4
+  tMatrix['RW','MaMa', c('MaR', 'MaW', 'RR', 'RW')] <- c((1-rM), (1-rM), rM, rM)/2
+  tMatrix['RW','MbMb', c('MbR', 'MbW', 'RR', 'RW')] <- c((1-rM), (1-rM), rM, rM)/2
+  tMatrix['RW','MaMb', c('MaR', 'MbR', 'MaW', 'MbW', 'RR', 'RW')] <- c((1 - rM), (1 - rM), (1 - rM), (1 - rM), 2*rM, 2*rM) / 4
+  tMatrix['RW','RZ', c('RR', 'RZ', 'RW', 'ZW')] <- c(1, 1, 1, 1)/4
+  tMatrix['RW','MaR', c('RW', 'MaR', 'RR', 'MaW')] <- c((1+rM), (1-rM), (1+rM), (1-rM))/4
+  tMatrix['RW','MbR', c('RW', 'MbR', 'RR', 'MbW')] <- c((1+rM), (1-rM), (1+rM), (1-rM))/4
+  tMatrix['RW','RR', c('RW', 'RR')] <- c(1, 1)/2
   
   ## Define viability mask
   viabilityMask <- array(data = 1, dim = c(size, size, size), dimnames = list(gtype, gtype, gtype))
-  viabilityMask[c('MaMa', 'MbMb', 'RZ', 'RMa', 'RMb')] <- 0  # Non-viable combinations
+  viabilityMask[c('MaMa', 'MbMb', 'RZ', 'MaR', 'MbR')] <- 0  # Non-viable combinations
   
   ## Genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)
@@ -137,8 +137,8 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
     "MaMa" = 0, 
     "MbMb" = 0, 
     "RZ" = 0, 
-    "RMa" = 0, 
-    "RMb" = 0, 
+    "MaR" = 0, 
+    "MbR" = 0, 
     "RR" = 0,
     "MaW" = 1, 
     "MbW" = 1, 

@@ -4,8 +4,8 @@
 ####################
 library(MGDrivE)
 
-source("scripts/cube-MEREA-with_resistance_allele.R")
-source("scripts/cube_auxiliary.R")
+source("cubes/cube-MEREA-with_resistance_allele.R")
+source("cubes/cube_auxiliary.R")
 
 
 current_run <- "mgdrive/bisex_homozygous_male"

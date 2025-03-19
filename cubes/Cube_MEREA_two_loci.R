@@ -76,8 +76,8 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   ## Fill tMatrix with inheritance probabilities
   tMatrix['ZW', 'ZZ', c('ZW', 'ZZ')] <- c(1, 1) / 2  # Wild-type cross
   
-  tMatrix['ZW', 'MaZ', c('MaZ', 'ZZ', 'MaW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4
-  tMatrix['ZW', 'MbZ', c('MbZ', 'ZZ', 'MbW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4
+  tMatrix['ZW', 'MaZ', c('MaZ', 'ZZ', 'MaW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4 # checked
+  tMatrix['ZW', 'MbZ', c('MbZ', 'ZZ', 'MbW', 'ZW', 'RZ', 'RW')] <- c((1 - rM), 1, (1 - rM), 1, rM, rM) / 4 
   tMatrix['ZW', 'MaMa', c('MaZ', 'MaW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), rM, rM) / 2
   tMatrix['ZW', 'MbMb', c('MbZ', 'MbW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), rM, rM) / 2
   tMatrix['ZW', 'MaMb', c('MaZ', 'MbZ', 'MaW', 'MbW', 'RZ', 'RW')] <- c((1 - rM), (1 - rM), (1 - rM), (1 - rM), rM, rM) / 4
@@ -91,7 +91,7 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   tMatrix['MaW','MbZ', c('MbW','MaMb','MaZ','ZW','RZ','RW','RR','MaR','MbR')] <- c((1 - rM), (1 - rM)^2, (1 - rM), 1, rM, rM, rM^2, rM*(1 - rM), rM*(1 - rM)) / 4
   tMatrix['MaW','MaMa', c('MaMa', 'MaW', 'RR', 'RW', 'MaR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2
   tMatrix['MaW','MbMb', c('MaMb','MbW','RR','MaR','MbR','RW')] <- c((1 - rM)^2, (1 - rM), rM^2, rM*(1 - rM), rM*(1 - rM), rM) / 2
-  tMatrix['MaW','MaMb', c('MaMa', 'MaMb', 'MaW', 'MbW', 'RR', 'RW', 'MaR', 'MbR')] <- c((1 - rM)^2, (1 - rM)^2, (1 - rM), (1 - rM), rM^2, 2*rM, rM*(1 - rM), rM*(1 - rM)) / 4
+  tMatrix['MaW','MaMb', c('MaMa', 'MaMb', 'MaW', 'MbW', 'RR', 'RW', 'MaR', 'MbR')] <- c((1 - rM)^2, (1 - rM)^2, (1 - rM), (1 - rM), 2*rM-(2*rM*(1-rM)), 2*rM, 3*rM*(1 - rM), rM*(1 - rM))/4 # checked
   tMatrix['MaW','RZ', c('MaZ', 'MaR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4
   tMatrix['MaW','MaR', c('MaMa', 'MaR', 'MaW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4
   tMatrix['MaW','MbR', c('MaR', 'MaMb', 'MbW', 'RW', 'RR', 'MbR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4

@@ -12,7 +12,7 @@ source("cubes/cube_MEREA_two_loci.R")  # Use the two-locus cube with parameters
 source("cubes/cube_auxiliary.R")
 
 
-current_run <- "mgdrive/threshold_resistance"
+current_run <- "mgdrive/change_threshold_resistance"
 dir.create(current_run)
 
 
@@ -44,50 +44,23 @@ sitesNumber <- nrow(moveMat)
 for (res in resistance_rates) {
   for (rel in releases) {
     
-    # Create cube with specified resistance allele formation rate
+    # Generate cube with specific resistance rate (rM)
     cube <- cubeMEREA_2L(rM = res)
     
-    # Set deterministic simulation
+    # Set MGDrivE to deterministic mode
     setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
     
-    # Define output folder
+    # Output folder
     outFolder <- file.path(current_run, paste0("rM_", res, "_release_", rel))
     dir.create(outFolder, recursive = TRUE, showWarnings = FALSE)
     
-    # Define release schedule: start at day 100, 3 intervals of 30 days
-    releases_list <- list(releasesStart = 100, releasesNumber = 3, releasesInterval = 30, releaseProportion = rel)
-    
-    # Generate release vectors for viable male and female genotypes
-    maleReleasesVector <- generateReleaseVector(
-      driveCube = cube,
-      nameGenotypes = list(
-        c("MaMb", 1)  # 100% of released males are MaMb
-      ),
-      releasesParameters = releases_list
-    )
-    
-    femaleReleasesVector <- generateReleaseVector(
-      driveCube = cube,
-      nameGenotypes = list(
-        c("MaW", 0.5),
-        c("MbW", 0.5)  # 50/50 mix of two viable females
-      ),
-      releasesParameters = releases_list
-    )
-    
-    # Patch release structure
+    # Patch releases setup (empty)
     patchReleases <- replicate(n = sitesNumber,
-                               expr = list(
-                                 maleReleases = NULL,
-                                 femaleReleases = NULL,
-                                 eggReleases = NULL,
-                                 matedFemaleReleases = NULL),
+                               expr = { list(maleReleases = NULL, femaleReleases = NULL,
+                                             eggReleases = NULL, matedFemaleReleases = NULL) },
                                simplify = FALSE)
     
-    patchReleases[[1]]$maleReleases <- maleReleasesVector
-    patchReleases[[1]]$femaleReleases <- femaleReleasesVector
-    
-    # Parameterise simulation
+    # Define network parameters
     netPar <- parameterizeMGDrivE(
       runID = paste0("rM_", res, "_rel_", rel),
       simTime = tMax,
@@ -103,28 +76,32 @@ for (res in resistance_rates) {
       inheritanceCube = cube
     )
     
-    # Run the simulation
-    MGDrivESim <- Network$new(
-      params = netPar,
-      driveCube = cube,
-      patchReleases = patchReleases,
-      migrationMale = moveMat,
-      migrationFemale = moveMat,
-      migrationBatch = basicBatchMigration(batchProbs = 0, sexProbs = c(0.5, 0.5), numPatches = sitesNumber),
-      directory = outFolder,
-      verbose = FALSE
-    )
+    # Assign introduction thresholds to starting adult population
+    netPar$AdPopRatio_F <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZW", "MaW")))
+    netPar$AdPopRatio_M <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
+    
+    # Run simulation
+    MGDrivESim <- Network$new(params = netPar,
+                              driveCube = cube,
+                              patchReleases = patchReleases,
+                              migrationMale = moveMat,
+                              migrationFemale = moveMat,
+                              migrationBatch = basicBatchMigration(batchProbs = 0, sexProbs = c(.5, .5), numPatches = sitesNumber),
+                              directory = outFolder,
+                              verbose = FALSE)
     
     MGDrivESim$oneRun(verbose = TRUE)
     
-    # Process and save results
+    ####################
+    # Post-processing and plotting
+    ####################
     splitOutput(readDir = outFolder, remFile = TRUE, verbose = FALSE)
     aggregateFemales(readDir = outFolder, genotypes = cube$genotypesID, remFile = TRUE, verbose = FALSE)
     
-    # Plot result in viewer
+    # Plot result in RStudio viewer
     plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
     
-    # Save plot as PNG
+    # Optional: Save plot as PNG
     png(file.path(outFolder, paste0("plot_rM_", res, "_release_", rel, ".png")), width = 1200, height = 800)
     plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
     dev.off()

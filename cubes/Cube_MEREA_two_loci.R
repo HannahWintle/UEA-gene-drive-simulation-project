@@ -106,7 +106,7 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   tMatrix['MbW','RZ', c('MbZ', 'MbR', 'ZW', 'RW', 'RZ', 'RR')] <- c((1-rM), (1-rM), 1, 1, rM, rM)/4 # checked
   tMatrix['MbW','MaR', c('MbR', 'MaMb', 'MaW', 'RW', 'RR', 'MaR')] <- c((1 - rM)*(1 + rM), (1 - rM)^2, (1 - rM), (1 + rM), rM*(1 + rM), rM*(1 - rM)) / 4 # checked
   tMatrix['MbW','MbR', c('MbMb', 'MbR', 'MbW', 'RW', 'RR')] <- c((1-rM)^2, (1-rM)*(1+2*rM), (1-rM), (1+rM), rM*(1+rM))/4 # checked
-  tMatrix['MbW','RR', c('MR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2 # checked
+  tMatrix['MbW','RR', c('MbR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2 # checked
   
   tMatrix['RW','ZZ', c('RZ', 'ZW')] <- c(1, 1)/2 # checked
   tMatrix['RW','MaZ', c('MaR', 'RZ', 'MaW', 'ZW', 'RR', 'RW')] <- c((1-rM), 1, (1-rM), 1, rM, rM)/4 # checked
@@ -121,7 +121,7 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   
   ## Define viability mask
   viabilityMask <- array(data = 1, dim = c(size, size, size), dimnames = list(gtype, gtype, gtype))
-  viabilityMask[c('MaMa', 'MbMb', 'RZ', 'MaR', 'MbR')] <- 0  # Non-viable combinations
+  viabilityMask[c('MaMa', 'MbMb', 'RZ', 'MaR', 'MbR'), , ] <- 0 
   
   ## Genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)

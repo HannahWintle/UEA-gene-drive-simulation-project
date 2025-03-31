@@ -4,7 +4,7 @@
 ####################
 library(MGDrivE)
 
-source("cubes/cube-MEREA-with_resistance_allele.R")
+source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
 

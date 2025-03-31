@@ -11,7 +11,7 @@ library(MGDrivE)
 source("cubes/cube_MEREA_two_loci.R")  # Use the two-locus cube with parameters
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/two_loci_03"
+current_run <- "mgdrive/two_loci_04"
 dir.create(current_run)
 
 ####################
@@ -42,25 +42,21 @@ sitesNumber <- nrow(moveMat)
 for (res in resistance_rates) {
   for (rel in releases) {
     
-    #cube
     cube <- cubeMEREA_2L(rM = res)
     
-    # Deterministic model
     setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
     
-    # Output folder
     outFolder <- file.path(current_run, paste0("rM_", res, "_release_", rel))
     dir.create(outFolder, recursive = TRUE, showWarnings = FALSE)
-
-    # Define release schedule: start at day 100, 3 intervals of 30 days
+    
     releases_list <- list(
       releasesStart = 100,
       releasesNumber = 3,
       releasesInterval = 30,
-      releaseProportion = rel
-      )
-   
-     # Generate release vectors for viable male (MaMb) and female (MaW) genotypes
+      releaseProportion = rel, 
+      releaseType = "Proportional"
+    )
+    
     maleReleasesVector <- generateReleaseVector(
       driveCube = cube,
       nameGenotypes = list(c("MaMb", 1)),
@@ -73,14 +69,12 @@ for (res in resistance_rates) {
       releasesParameters = releases_list
     )
     
-    # Patch releases setup (empty)
     patchReleases <- replicate(n = sitesNumber,
                                expr = { list(maleReleases = maleReleasesVector, 
                                              femaleReleases = femaleReleasesVector,
                                              eggReleases = NULL, matedFemaleReleases = NULL) },
                                simplify = FALSE)
     
-    # Define network parameters
     netPar <- parameterizeMGDrivE(
       runID = paste0("rM_", res, "_rel_", rel),
       simTime = tMax,
@@ -96,11 +90,9 @@ for (res in resistance_rates) {
       inheritanceCube = cube
     )
     
-    # Assign introduction thresholds to starting adult population
-    netPar$AdPopRatio_F <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZW", "MaW")))
-    netPar$AdPopRatio_M <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
+    netPar$AdPopRatio_F <- matrix(c(1, 0), nrow = 1, dimnames = list(NULL, c("ZW", "MaW")))
+    netPar$AdPopRatio_M <- matrix(c(1, 0), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
     
-    # Run simulation
     MGDrivESim <- Network$new(params = netPar,
                               driveCube = cube,
                               patchReleases = patchReleases,

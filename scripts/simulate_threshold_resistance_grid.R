@@ -12,7 +12,7 @@ source("cubes/cube_MEREA_two_loci.R")  # Use the two-locus cube with parameters
 source("cubes/cube_auxiliary.R")
 
 
-current_run <- "mgdrive/two_loci_01"
+current_run <- "mgdrive/two_loci_02"
 dir.create(current_run)
 
 
@@ -77,7 +77,8 @@ for (res in resistance_rates) {
     
     # Patch releases setup (empty)
     patchReleases <- replicate(n = sitesNumber,
-                               expr = { list(maleReleases = NULL, femaleReleases = NULL,
+                               expr = { list(maleReleases = maleReleasesVector, 
+                                             femaleReleases = femaleReleasesVector,
                                              eggReleases = NULL, matedFemaleReleases = NULL) },
                                simplify = FALSE)
     
@@ -98,8 +99,9 @@ for (res in resistance_rates) {
     )
     
     # Assign introduction thresholds to starting adult population
-    netPar$AdPopRatio_F <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZW", "MaW")))
-    netPar$AdPopRatio_M <- matrix(c(1 - rel, rel), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
+    netPar$AdPopRatio_F <- matrix(c(1, 0), nrow = 1, dimnames = list(NULL, c("ZW", "MaW")))
+    netPar$AdPopRatio_M <- matrix(c(1, 0), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
+    
     
     # Run simulation
     MGDrivESim <- Network$new(params = netPar,

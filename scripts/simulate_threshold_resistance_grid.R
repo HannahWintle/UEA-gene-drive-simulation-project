@@ -12,7 +12,7 @@ source("cubes/cube_MEREA_two_loci.R")  # Use the two-locus cube with parameters
 source("cubes/cube_auxiliary.R")
 
 
-current_run <- "mgdrive/change_threshold_resistance"
+current_run <- "mgdrive/two_loci_01"
 dir.create(current_run)
 
 
@@ -44,15 +44,36 @@ sitesNumber <- nrow(moveMat)
 for (res in resistance_rates) {
   for (rel in releases) {
     
-    # Generate cube with specific resistance rate (rM)
+    #cube
     cube <- cubeMEREA_2L(rM = res)
     
-    # Set MGDrivE to deterministic mode
+    # Deterministic model
     setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
     
     # Output folder
     outFolder <- file.path(current_run, paste0("rM_", res, "_release_", rel))
     dir.create(outFolder, recursive = TRUE, showWarnings = FALSE)
+
+    # Define release schedule: start at day 100, 3 intervals of 30 days
+    releases_list <- list(
+      releasesStart = 100,
+      releasesNumber = 3,
+      releasesInterval = 30,
+      releaseProportion = rel
+      )
+   
+     # Generate release vectors for viable male (MaMb) and female (MaW) genotypes
+    maleReleasesVector <- generateReleaseVector(
+      driveCube = cube,
+      nameGenotypes = list(c("MaMb", 1)),
+      releasesParameters = releases_list
+    )
+    
+    femaleReleasesVector <- generateReleaseVector(
+      driveCube = cube,
+      nameGenotypes = list(c("MaW", 1)),
+      releasesParameters = releases_list
+    )
     
     # Patch releases setup (empty)
     patchReleases <- replicate(n = sitesNumber,

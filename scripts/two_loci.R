@@ -7,7 +7,7 @@
 # Load libraries
 ####################
 library(MGDrivE)
-source("cubes/cube_MEREA_two_loci.R")  # Use the two-locus cube with parameters
+source("cubes/cube_MEREA_two_loci.R")
 source("cubes/cube_auxiliary.R")
 
 current_run <- "mgdrive/two_loci"

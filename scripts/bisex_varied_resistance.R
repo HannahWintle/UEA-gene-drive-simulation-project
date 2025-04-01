@@ -7,7 +7,7 @@ library(MGDrivE)
 source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/bisex_varied_resistance"
+current_run <- "mgdrive/bisex_varied_resistance_test"
 dir.create(current_run)
 
 ####################

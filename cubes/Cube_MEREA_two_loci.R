@@ -122,7 +122,16 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   
   ## Define viability mask
   viabilityMask <- array(data = 1, dim = c(size, size, size), dimnames = list(gtype, gtype, gtype))
-  viabilityMask[c('MaMa', 'MbMb', 'RZ', 'MaR', 'MbR'), , ] <- 0 
+ 
+   # Define non-viable offspring of MaW and MbW females (i.e. anything not in the exception list)
+  allowed_offspring <- setdiff(gtype, c('MaMb', 'RZ', 'MaR', 'MbR', 'RR', 'RW'))
+  
+  # Update viability mask for MaW and MbW mothers
+  for (mother in c("MaW", "MbW")) {
+    for (offspring in allowed_offspring) {
+      viabilityMask[mother, , offspring] <- 0
+    }
+  }
   
   ## Genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)
@@ -160,6 +169,6 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
     xiF = modifiers$xiF,
     xiM = modifiers$xiM,
     s = modifiers$s,
-    releaseType = c("MaMb", "MaMa", "MbMb", "MaW", "MbW")
+    releaseType = c("MaMb", "MaW")
   ))
 }

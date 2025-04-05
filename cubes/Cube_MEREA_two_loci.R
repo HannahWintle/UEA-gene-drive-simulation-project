@@ -59,11 +59,12 @@
 ###############################################################################
 
 cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
-                                           omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
+                         omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
   
-  ## Safety checks
-  if(any(c(rM, Teff) < 0) || any(c(rM, Teff) > 1)){
-    stop("Parameters are rates. 0 <= x <= 1")
+  ## safety checks
+  if(any(c(rM, Teff)<0) || any(c(rM, Teff)>1)){
+    stop("Parameters are rates.
+         0 <= x <= 1")
   }
   
   ## Define genotype list
@@ -98,7 +99,7 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   tMatrix['MaW','RR', c('MaR', 'RW', 'RR')] <- c((1-rM), 1, rM)/2 # checked
   
   tMatrix['MbW','ZZ', c('MbZ', 'ZW', 'RZ')] <- c(1-rM, 1, rM)/2 # checked
-  tMatrix['MbW','MaZ', c('MbW','MaMb','MaZ','ZW','RZ','RW','RR','MaR','MbR')] <- c((1 - rM), (1 - rM)^2, (1 - rM), 1, rM, rM, rM^2, rM*(1 - rM), rM*(1 - rM)) / 4 # checked
+  tMatrix['MbW','MaZ', c('MaW','MaMb','MbZ','ZW','RZ','RW','RR','MaR','MbR')] <- c((1 - rM), (1 - rM)^2, (1 - rM), 1, rM, rM, rM^2, rM*(1 - rM), rM*(1 - rM)) / 4 # checked
   tMatrix['MbW','MbZ', c('MbW', 'MbMb', 'MbZ', 'ZW', 'RZ', 'RW', 'RR', 'MbR')] <- c(1-rM, (1-rM)^2, 1-rM, 1, rM, rM, rM^2, 2*(1-rM)*rM)/4 # checked
   tMatrix['MbW','MaMa', c('MaMb', 'MaW', 'RR', 'MaR', 'MbR', 'RW')] <- c((1 - rM)^2, (1 - rM), rM^2, rM*(1 - rM), rM*(1 - rM), rM) / 2 # checked
   tMatrix['MbW','MbMb', c('MbMb', 'MbW', 'RR', 'RW', 'MbR')] <- c((1-rM)^2, (1-rM), rM^2, rM, 2*(1-rM)*rM)/2 # checked

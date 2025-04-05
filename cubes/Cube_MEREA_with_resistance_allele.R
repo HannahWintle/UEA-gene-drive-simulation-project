@@ -105,12 +105,14 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
   ## initialize viability mask.
   viabilityMask <- array(data = 1, dim = c(size,size,size), dimnames = list(gtype, gtype, gtype))
   
-  # for loop may be unnecessary
+  # Kill all offspring of MW females by default
+  viabilityMask['MW', 1:size, 1:size] <- 0
   
-  # All offspring of MW females are dead regardless of father
-  viabilityMask['MW', 1:size, 1:size ] <- matrix( rep(1-Teff,size), nrow = 1, ncol = size, byrow = TRUE )
-  # MW female offspring survive if their offspring is MM
-  viabilityMask['MW', 1:size, 'MM'] <- matrix(rep(1, size), nrow = 1, ncol = size, byrow = TRUE)
+  # Allow survival only for specific genotypes
+  allowed_offspring <- c('MM', 'MR', 'RZ', 'RW', 'RR')
+  for (offspring in allowed_offspring) {
+    viabilityMask['MW', 1:size, offspring] <- 1
+  }
   
   ## genotype-specific modifiers
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)

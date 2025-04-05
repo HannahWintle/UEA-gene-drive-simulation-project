@@ -94,10 +94,9 @@ for (i in 1:nrow(data)) {
       inheritanceCube = cube
     )
     
+# To do list: set netPar larval pop to null and then increase for more realistic simulations
 #    netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW")))
-    
 #    netPar$AdPopRatio_M <- matrix(c(1-data$introduction_thresholds[[i]], data$introduction_thresholds[[i]]), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
-    
 #    netPar$LarPopRatio <- NULL
     
     MGDrivESim <- Network$new(

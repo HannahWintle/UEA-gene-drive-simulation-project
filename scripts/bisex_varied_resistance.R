@@ -106,7 +106,7 @@ for (i in 1:nrow(data)) {
   MGDrivESim$oneRun(verbose = TRUE)
   
   ####################
-  # Post-processing simulation outputs
+  # Post-processing
   ####################
   splitOutput(readDir = outFolder, remFile = TRUE, verbose = FALSE)
   aggregateFemales(readDir = outFolder, genotypes = cube$genotypesID, remFile = TRUE, verbose = FALSE)
@@ -115,9 +115,7 @@ for (i in 1:nrow(data)) {
   png(filename = plot_file, width = 1200, height = 800)
   plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
   dev.off()
-  
-  plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
-  
+
   print(paste("Completed: Threshold =", threshold, "rM =", rM_value))
 }
 

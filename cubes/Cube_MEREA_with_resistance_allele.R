@@ -148,6 +148,6 @@ tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gt
     xiF = modifiers$xiF,
     xiM = modifiers$xiM,
     s = modifiers$s,
-    releaseType = c("MZ", "MW")
+    releaseType = c("MM", "MW")
   ))
 }

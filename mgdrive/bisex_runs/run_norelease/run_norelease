@@ -1,0 +1,8 @@
+### run_norelease
+
+## run_norelease_script.R
+# a script to run the MEREA cube with no male or female releases into an adult pop of 250
+
+## Rplot_run_norelease.png
+# a plot depicting the the MEREA cube simulation when there is no releases of MEREA alleles into wild population
+# 100% wildtype population dynamics at an equilibrium of 250 individuals

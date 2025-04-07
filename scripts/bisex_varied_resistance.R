@@ -7,7 +7,7 @@ library(MGDrivE)
 source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/bisex_runs/bisex_LarPop_0.5"
+current_run <- "mgdrive/bisex_runs/bisex_LarPopNull"
 dir.create(current_run)
 
 ####################
@@ -98,8 +98,8 @@ for (i in 1:nrow(data)) {
   #Set wildtype larval population
   netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW")))    
   netPar$AdPopRatio_M <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZZ", "MM")))
-  netPar$LarPopRatio <- matrix(c(0.5, 0.5), nrow = 1, dimnames = list(NULL, c("ZW", "ZZ")))
-#  netPar$LarPopRatio <- NULL
+#  netPar$LarPopRatio <- matrix(c(0.5, 0.5), nrow = 1, dimnames = list(NULL, c("ZW", "ZZ")))
+  netPar$LarPopRatio <- NULL
   
   MGDrivESim <- Network$new(
     params = netPar,

@@ -1,23 +1,20 @@
-## Simulate different threshold and resistance outcomes
-# Release threshold reflects how intense your release is
-# Resistance allele formation rate (rM) controls how often the intended drive
-# allele (M) mutates into a resistance allele (R)
-
+## Testing MEREA in MGDrivE
 ####################
 # Load libraries
 ####################
 library(MGDrivE)
-source("cubes/cube_MEREA_two_loci.R")
+
+source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/two_loci/LarPop/two_loci_LarPop_0.5"
+current_run <- "mgdrive/bisex_runs/LarPop/bisex_LarPop_0.5"
 dir.create(current_run)
 
 ####################
-# Define parameter ranges
+# Define vectors of parameters to vary
 ####################
-introduction_thresholds <- seq(0.1, 1.0, by = 0.1)  # From 10% to 100%
-resistance_values <- seq(0, 0.5, by = 0.1)  # Resistance allele probability
+introduction_thresholds <- seq(0.1, 1.0, by = 0.1)  # from 10% to 100% introduction frequency
+resistance_values <- seq(0, 0.5, by = 0.1)  # from 0 (no resistance) to 0.5 (high resistance)
 
 ####################
 # Simulation Parameters
@@ -34,6 +31,7 @@ setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
 ####################
 # for loop
 ####################
+# Create data.frame with all combinations
 data <- expand.grid(
   introduction_thresholds = introduction_thresholds,
   resistance_values = resistance_values
@@ -47,29 +45,28 @@ for (i in 1:nrow(data)) {
   print(paste("Running: Threshold =", threshold, "rM =", rM_value))
   
   # Create inheritance cube
-  cube <- cubeMEREA_2L(rM = rM_value)
+  cube <- cubeMEREA(rM = rM_value)
   
   # Calculate release size
   release_size <- adultPopEquilibrium * threshold
   
   # Release setup
   releasesParameters <- list(
-    releasesStart=100, 
-    releasesNumber=3,
-    releasesInterval=30, 
-    releaseProportion=release_size
+    releasesStart = 100,
+    releasesNumber = 3,
+    releasesInterval = 30,
+    releaseProportion = release_size
   )
   
   maleReleasesVector <- generateReleaseVector(
     driveCube = cube,
-    nameGenotypes = list(c("MaMb", release_size)),
+    nameGenotypes = list(c("MM", release_size)),
     releasesParameters = releasesParameters
   )
   
   femaleReleasesVector <- generateReleaseVector(
     driveCube = cube,
-    nameGenotypes = list(c("MaW", release_size/2), #changed
-                         c("MbW", release_size/2)), #changed
+    nameGenotypes = list(c("MW", release_size)),
     releasesParameters = releasesParameters
   )
   
@@ -77,8 +74,9 @@ for (i in 1:nrow(data)) {
                              expr = list(maleReleases = NULL, femaleReleases = NULL,
                                          eggReleases = NULL, matedFemaleReleases = NULL),
                              simplify = FALSE)
-  patchReleases[[1]]$maleReleases <- maleReleasesVector
-  patchReleases[[1]]$femaleReleases <- femaleReleasesVector
+  
+  patchReleases[[1]]$maleReleases <- NULL
+  patchReleases[[1]]$femaleReleases <- NULL
   
   outFolder <- paste0(current_run, "/threshold_", threshold, "_rM_", rM_value)
   dir.create(outFolder, recursive = TRUE, showWarnings = FALSE)
@@ -99,9 +97,9 @@ for (i in 1:nrow(data)) {
   )
   
   #Set wildtype larval population
-  netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW"))) #changed
-  netPar$AdPopRatio_M <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZZ"))) #changed
-  netPar$LarPopRatio <- matrix(c(0.5, 0.5), nrow = 1, dimnames = list(NULL, c("ZW", "ZZ"))) #changed
+  netPar$AdPopRatio_F <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZW")))
+  netPar$AdPopRatio_M <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZZ")))
+  netPar$LarPopRatio <- NULL
   
   MGDrivESim <- Network$new(
     params = netPar,

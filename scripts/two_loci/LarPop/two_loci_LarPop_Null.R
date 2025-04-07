@@ -68,8 +68,8 @@ for (i in 1:nrow(data)) {
   
   femaleReleasesVector <- generateReleaseVector(
     driveCube = cube,
-    nameGenotypes = list(c("MaW", release_size/2), #check
-                         c("MbW", release_size/2)), #check
+    nameGenotypes = list(c("MaW", release_size/2), #changed
+                         c("MbW", release_size/2)), #changed
     releasesParameters = releasesParameters
   )
   
@@ -99,9 +99,9 @@ for (i in 1:nrow(data)) {
   )
   
   #Set wildtype larval population
-  netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW")))    
-  netPar$AdPopRatio_M <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZZ")))
-  netPar$LarPopRatio <- NULL
+  netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW"))) #changed
+  netPar$AdPopRatio_M <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZZ"))) #changed
+  netPar$LarPopRatio <- NULL #changed
   
   MGDrivESim <- Network$new(
     params = netPar,

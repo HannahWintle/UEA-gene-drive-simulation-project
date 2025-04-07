@@ -7,7 +7,7 @@ library(MGDrivE)
 source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/bisex_test_run002"
+current_run <- "mgdrive/bisex_runs/bisex_test_run003"
 dir.create(current_run)
 
 ####################
@@ -24,6 +24,9 @@ bioParameters <- list(betaK=20, tEgg=5, tLarva=6, tPupa=4, popGrowth=1.175, muAd
 moveMat <- matrix(data = 1, nrow = 1, ncol = 1)
 adultPopEquilibrium <- 500
 sitesNumber <- nrow(moveMat)
+
+# Set MGDrivE to deterministic mode
+setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
 
 ####################
 # for loop

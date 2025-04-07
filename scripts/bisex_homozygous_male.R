@@ -8,9 +8,8 @@ source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
 
-current_run <- "mgdrive/bisex_homozygous_male_test"
+current_run <- "mgdrive/bisex_runs/bisex_homozygous_male_test_002"
 dir.create(current_run)
-
 
 ####################
 # Define Releases

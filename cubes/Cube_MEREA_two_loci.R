@@ -1,3 +1,4 @@
+
 ###############################################################################
 #      ______      __
 #     / ____/_  __/ /_  ___
@@ -122,8 +123,8 @@ cubeMEREA_2L <- function(rM = 0, Teff = 1.0, eta = NULL, phi = NULL,
   
   ## Define viability mask
   viabilityMask <- array(data = 1, dim = c(size, size, size), dimnames = list(gtype, gtype, gtype))
- 
-   # Define non-viable offspring of MaW and MbW females (i.e. anything not in the exception list)
+  
+  # Define non-viable offspring of MaW and MbW females (i.e. anything not in the exception list)
   allowed_offspring <- setdiff(gtype, c('MaMb', 'RZ', 'MaR', 'MbR', 'RR', 'RW'))
   
   # Update viability mask for MaW and MbW mothers

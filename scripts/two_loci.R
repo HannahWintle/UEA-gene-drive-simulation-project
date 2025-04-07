@@ -10,7 +10,7 @@ library(MGDrivE)
 source("cubes/cube_MEREA_two_loci.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/two_loci/two_loci_test004"
+current_run <- "mgdrive/two_loci/two_loci_LarPopNull"
 dir.create(current_run)
 
 ####################
@@ -97,10 +97,10 @@ for (i in 1:nrow(data)) {
     inheritanceCube = cube
   )
   
-  # To do list: set netPar larval pop to null and then increase for more realistic simulations
-  #    netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW")))
-  #    netPar$AdPopRatio_M <- matrix(c(1-data$introduction_thresholds[[i]], data$introduction_thresholds[[i]]), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
-  #    netPar$LarPopRatio <- NULL
+  #Set wildtype larval population
+  netPar$AdPopRatio_F <- matrix(c(1), nrow = 1, dimnames = list(NULL, c("ZW")))    
+  netPar$AdPopRatio_M <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZZ", "MaMb")))
+  netPar$LarPopRatio <- NULL
   
   MGDrivESim <- Network$new(
     params = netPar,
@@ -125,6 +125,9 @@ for (i in 1:nrow(data)) {
   png(filename = plot_file, width = 1200, height = 800)
   plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
   dev.off()
+  
+  # Display the plot in RStudio Viewer
+  plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
   
   print(paste("Completed: Threshold =", threshold, "rM =", rM_value))
 }

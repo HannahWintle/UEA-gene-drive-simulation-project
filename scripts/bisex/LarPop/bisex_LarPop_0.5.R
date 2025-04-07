@@ -97,6 +97,10 @@ for (i in 1:nrow(data)) {
   )
   
   #Set wildtype larval population
+  #check these over
+  #I'm pretty sure the MEREA genotypes are not meant to be here
+  #this is what the script looked like for the last run output (bisex_LarPop_0.5)
+  #I can't remember what Phil said I need to look back over my notes
   netPar$AdPopRatio_F <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZW", "MW")))    
   netPar$AdPopRatio_M <- matrix(c(1-threshold, threshold), nrow = 1, dimnames = list(NULL, c("ZZ", "MM")))
   netPar$LarPopRatio <- matrix(c(0.25, 0.25, .25, .25), nrow = 1, dimnames = list(NULL, c("ZW", "ZZ", "MW", "MM")))

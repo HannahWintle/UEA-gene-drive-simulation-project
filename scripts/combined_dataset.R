@@ -7,6 +7,10 @@ sim_dirs <- c("mgdrive/two_loci/actual_two_loci",
               "mgdrive/bisex_runs/actual_bisex",
               "mgdrive/bisex_runs/realistic_bisex")
 
+# Create a directory for combined results
+current_run <- "mgdrive/combined"
+dir.create(current_run, recursive = TRUE, showWarnings = FALSE)
+
 # Function to read and process individual simulation outputs
 read_simulation <- function(sim_path) {
   
@@ -27,20 +31,18 @@ read_simulation <- function(sim_path) {
     female_file <- file.path(sub_dir, "AggFemale.csv")
     
     if (file.exists(female_file)) {
-      
       df <- read_csv(female_file, col_types = cols()) %>%
         mutate(threshold = params$threshold,
                resistance = params$resistance,
                simulation = basename(sim_path),
                run_folder = basename(sub_dir))
       
-      # Compute total females across genotypes (assuming genotype columns start from the 2nd column onward)
+      # Compute total females across genotypes
       df <- df %>%
         mutate(total_females = rowSums(across(-Generation, -threshold, -resistance, -simulation, -run_folder)))
       
       return(df)
     } else {
-      # Handle cases where CSV does not exist or is missing
       warning(paste("File does not exist:", female_file))
       return(NULL)
     }
@@ -49,11 +51,11 @@ read_simulation <- function(sim_path) {
   return(sim_data)
 }
 
-# Apply the function across all simulation directories
+# Combine datasets from all simulations
 all_simulations_df <- map_df(sim_dirs, read_simulation)
 
 # Inspect combined dataframe
-glimpse(all_simulations_df)
+print(glimpse(all_simulations_df))
 
-# Save the combined dataframe for easy access later
-write_csv(all_simulations_df, "combined_simulation_results.csv")
+# Save the combined dataframe explicitly to your created folder
+write_csv(all_simulations_df, file.path(current_run, "combined_simulation_results.csv"))

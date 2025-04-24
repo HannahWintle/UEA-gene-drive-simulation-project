@@ -2,22 +2,22 @@
 library(tidyverse)
 
 # Load datasets
-actual <- read_csv("mgdrive/bisex_runs/actual_bisex_combined.csv") %>%
+actual <- read_csv("mgdrive/two_loci/actual_two_loci_combined.csv") %>%
   mutate(simulation_type = "actual")
 
-realistic <- read_csv("mgdrive/bisex_runs/realistic_bisex_combined.csv") %>%
+realistic <- read_csv("mgdrive/two_loci/realistic_two_loci_combined.csv") %>%
   mutate(simulation_type = "realistic")
 
 # Combine and filter for rM = 0 and generation 10 to 30
 combined_data <- bind_rows(actual, realistic) %>%
-  filter(rM == 0, generation >= 5, generation <= 30)
+  filter(rM == 0.001, generation >= 5, generation <= 20)
 
 combined_data$simulation_type <- factor(combined_data$simulation_type,
                                         levels = c("actual", "realistic"),
                                         labels = c("Controlled Scenario", "Realistic Scenario"))
 
 # Create output directory if it doesn't exist
-output_dir <- "plots/bisex"
+output_dir <- "plots/two_loci"
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Define thresholds and custom colour palette
@@ -37,11 +37,11 @@ plot_rM0_final <- ggplot(combined_data, aes(x = generation, y = total_females, c
   geom_hline(data = combined_data %>% filter(simulation_type == "Controlled Scenario" & generation == 5),
              aes(yintercept = 0), colour = "black") +
   scale_colour_manual(values = threshold_palette) +
-  scale_x_continuous(limits = c(5, 30), expand = c(0, 0)) +
+  scale_x_continuous(limits = c(5, 20), expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0), breaks = c(0, 50, 100, 150, 200, 250)) +
   facet_wrap(~ simulation_type, ncol = 1) +
   labs(
-    title = "Female Population Dynamics by Introduction Threshold (No Resistance)",
+    title = "Two-Locus Female Population Dynamics by Introduction Threshold (High Resistance)",
     x = "Generation",
     y = "Total Females",
     colour = "Threshold"
@@ -50,5 +50,5 @@ plot_rM0_final <- ggplot(combined_data, aes(x = generation, y = total_females, c
   theme(strip.background = element_blank())
 
 # Save plot
-ggsave(filename = file.path(output_dir, "bisex_linegraphs_rM_0_clean.png"),
+ggsave(filename = file.path(output_dir, "two_loci_linegraphs_rM_high.png"),
        plot = plot_rM0_final, width = 12, height = 8, dpi = 300)

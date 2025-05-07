@@ -14,7 +14,7 @@ combined_data <- bind_rows(actual, realistic) %>%
 
 combined_data$simulation_type <- factor(combined_data$simulation_type,
                                         levels = c("actual", "realistic"),
-                                        labels = c("Controlled Scenario", "Realistic Scenario"))
+                                        labels = c("Mathematically Ideal Scenario", "More Realistic Scenario"))
 
 # Create output directory if it doesn't exist
 output_dir <- "plots/bisex"

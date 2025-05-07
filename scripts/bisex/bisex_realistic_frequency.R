@@ -7,53 +7,53 @@ library(MGDrivE)
 source("cubes/cube_MEREA_with_resistance_allele.R")
 source("cubes/cube_auxiliary.R")
 
-current_run <- "mgdrive/bisex_runs/realistic_bisex"
+current_run <- "mgdrive/bisex_runs/realistic_bisex_runs"
 dir.create(current_run)
 
 ####################
 # Define vectors of parameters to vary
 ####################
-introduction_thresholds <- seq(0.1, 1.0, by = 0.1)  # from 10% to 100% introduction frequency
-resistance_values <- seq(0, 0.001, by = 0.0001)  # Resistance allele probability #changed
+# Define vectors of parameters to vary
+introduction_thresholds <- seq(0.1, 1.0, by = 0.1)
+resistance_values <- c(0, 0.0001, 0.001, 0.01, 0.1)
+releasesNumber_values <- seq(1, 10, by = 1)
 
 ####################
 # Simulation Parameters
 ####################
-tMax <- 2000  # Total simulation time
-bioParameters <- list(betaK=20, tEgg=5, tLarva=6, tPupa=4, popGrowth=1.175, muAd=0.09)
+# Simulation parameters
+tMax <- 2000
+bioParameters <- list(betaK = 20, tEgg = 5, tLarva = 6, tPupa = 4, popGrowth = 1.175, muAd = 0.09)
 moveMat <- matrix(data = 1, nrow = 1, ncol = 1)
 adultPopEquilibrium <- 500
 sitesNumber <- nrow(moveMat)
 
-# Set MGDrivE to deterministic mode
 setupMGDrivE(stochasticityON = FALSE, verbose = FALSE)
 
 ####################
 # for loop
 ####################
 # Create data.frame with all combinations
-data <- expand.grid(
+param_grid <- expand.grid(
   introduction_thresholds = introduction_thresholds,
-  resistance_values = resistance_values
+  resistance_values = resistance_values,
+  releasesNumber = releasesNumber_values
 )
 
-# Loop over each row using index i
-for (i in 1:nrow(data)) {
-  threshold <- data$introduction_thresholds[i]
-  rM_value <- data$resistance_values[i]
+# Loop over each row
+for (i in 1:nrow(param_grid)) {
+  threshold <- param_grid$introduction_thresholds[i]
+  rM_value <- param_grid$resistance_values[i]
+  n_releases <- param_grid$releasesNumber[i]
   
-  print(paste("Running: Threshold =", threshold, "rM =", rM_value))
+  print(paste("Running: Threshold =", threshold, "rM =", rM_value, "Releases =", n_releases))
   
-  # Create inheritance cube
   cube <- cubeMEREA(rM = rM_value)
-  
-  # Calculate release size
   release_size <- adultPopEquilibrium * threshold
   
-  # Release setup
   releasesParameters <- list(
     releasesStart = 100,
-    releasesNumber = 3,
+    releasesNumber = n_releases,
     releasesInterval = 30,
     releaseProportion = release_size
   )
@@ -82,7 +82,7 @@ for (i in 1:nrow(data)) {
   dir.create(outFolder, recursive = TRUE, showWarnings = FALSE)
   
   netPar <- parameterizeMGDrivE(
-    runID = paste0("threshold_", threshold, "_rM_", rM_value),
+    runID = paste0("threshold_", threshold, "_rM_", rM_value, "_nRel_", n_releases),
     simTime = tMax,
     sampTime = 30,
     nPatch = sitesNumber,
@@ -116,19 +116,19 @@ for (i in 1:nrow(data)) {
   ####################
   # Post-processing
   ####################
+  MGDrivESim$oneRun(verbose = TRUE)
+  
   splitOutput(readDir = outFolder, remFile = TRUE, verbose = FALSE)
   aggregateFemales(readDir = outFolder, genotypes = cube$genotypesID, remFile = TRUE, verbose = FALSE)
   
-  plot_file <- file.path(outFolder, paste0("plot_threshold_", threshold, "_rM_", rM_value, ".png"))
-  png(filename = plot_file, width = 1200, height = 800)
-  plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
+  png(filename = file.path(outFolder, paste0("plot_threshold_", threshold, "_rM_", rM_value, "_nRel_", n_releases, ".png")),
+      width = 400, height = 300)
+  par(mar = c(4, 4, 2, 1))
+  plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 2, alpha = 1)
   dev.off()
+  #plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 2, alpha = 1)
   
-  # Display the plot in RStudio Viewer
-  plotMGDrivESingle(readDir = outFolder, totalPop = TRUE, lwd = 3.5, alpha = 1)
-  
-  print(paste("Completed: Threshold =", threshold, "rM =", rM_value))
+  print(paste("Completed: Threshold =", threshold, "rM =", rM_value, "Releases =", n_releases))
 }
 
-## Simulation end message
 print("All simulations complete.")

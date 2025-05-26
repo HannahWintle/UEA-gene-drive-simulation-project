@@ -1,0 +1,12 @@
+This folder contains visual output files (figures) generated from simulation data for the MEREA gene drive project. Plots are grouped by gene drive architecture and reflect key comparisons across release scenarios and thresholds.
+
+Subdirectories:
+
+- bisex/
+    ↳ bisex_thresholds_all/ : Line graphs showing ZW female population dynamics over time for various introduction thresholds (e.g. 10%–100%), using repeated releases.
+    ↳ bisex_releases_all/   : Line graphs comparing the effect of release frequency (1–6 staggered introductions) on population suppression under ecologically realistic conditions.
+    ↳ bisex_pure/           : Line graphs for idealised scenarios (no larval carryover), comparing suppression dynamics from single releases at different threshold levels.
+
+- two_loci/
+    ↳ two_loci_thresholds_all/ : Line graphs comparing ZW female population trajectories over time at increasing threshold percentages (e.g. 50%, 70%, 90%) with 8 repeated releases.
+    ↳ two_loci_heatmap/        : Heatmap showing the proportion of wild-type females remaining at generation 30 for each combination of release number (1–10) and introduction threshold (10%–100%).

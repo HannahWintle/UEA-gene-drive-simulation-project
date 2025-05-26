@@ -1,0 +1,20 @@
+This folder contains all R scripts used to simulate, process, and visualise gene drive scenarios for the one locus MEREA system.
+
+The directory is structured to separate gene drive configurations (e.g. bisex vs two-locus) and script functionality (e.g. simulation vs plotting vs data preparation).
+
+📁 Subdirectories:
+  
+- bisex/
+    ↳ bisex_actual_frequency.R   : Runs simulations for idealised (mathematically simplified) bisex gene drive scenarios
+    ↳ bisex_realistic_frequency.R: Runs simulations under ecologically realistic assumptions
+    ↳ bisex_no_release.R         : Models population dynamics without any gene drive release
+    ↳ bisex_male_release.R       : Models male-only bisex drive releases under realistic conditions
+
+- plots/
+    ↳ bisex_releases_all.R       : Compares population dynamics across different release schedules
+    ↳ bisex_thresholds_all.R     : Visualises suppression success vs introduction threshold
+    ↳ bisex_pure.R               : Visualises mathematically ideal scenario (single release) across all thresholds
+
+- dataframe/
+    ↳ realistic_bisex_combined.R : Prepares and combines realistic simulation outputs into a unified data frame
+    ↳ actual_bisex_combined.R    : Prepares combined output for idealised bisex scenarios

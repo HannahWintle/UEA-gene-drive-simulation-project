@@ -1,7 +1,7 @@
 # Load libraries
 library(MGDrivE)
 
-source("cubes/cube_MEREA_with_resistance_allele.R")
+source("cubes/cube_MEREA_bisex.R")
 source("cubes/cube_auxiliary.R")
 
 current_run <- "mgdrive/bisex_runs/actual_bisex_runs"

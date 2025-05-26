@@ -1,0 +1,17 @@
+This folder contains all R scripts used to simulate, process, and visualise gene drive scenarios for the one locus MEREA system.
+
+The directory is structured to separate gene drive configurations (e.g. bisex vs two-locus) and script functionality (e.g. simulation vs plotting vs data preparation).
+
+📁 Subdirectories:
+  
+- two_loci/
+    ↳ two_loci_actual_frequency.R   : Simulates idealised (mathematically simplified) two-locus gene drive releases
+    ↳ two_loci_realistic_frequency.R: Simulates ecologically realistic scenarios including larval carryover and overlapping generations
+
+- plots/
+    ↳ two_loci_thresholds_all.R     : Visualises suppression success vs introduction threshold for two_locus
+    ↳ two_loci_heatmap.R            : Visualises surviving wildtype females across all thresholds and all releases
+
+- dataframe/
+    ↳ realistic_two_loci_combined.R : Prepares and combines realistic simulation outputs into a unified data frame
+    ↳ actual_two_loci_combined.R    : Prepares combined output for idealised bisex scenarios

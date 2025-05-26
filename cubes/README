@@ -1,0 +1,8 @@
+This folder contains custom inheritance cubes used with the MGDrivE simulation framework to model various gene drive systems in Plutella xylostella.
+
+Each R script defines genotype-specific inheritance and survival outcomes for a different genetic configuration. These cubes are referenced during simulation execution.
+
+Files:
+- cube_MEREA_two_loci.R       : Encodes the two-locus (split-drive) MEREA system, with toxin and antidote on separate loci
+- cube_MEREA_bisex.R          : A variant of the MEREA system where both sexes carry the drive (bisexual release model)
+- cube_auxiliary.R            : Called automatically in the necessary R scripts. Supplementary logic for cube construction.

@@ -1,0 +1,16 @@
+This folder contains csv simulation outputs generated using the MGDrivE framework in R. Outputs are organised by gene drive system and simulation type.
+
+Subdirectories:
+
+- bisex_runs/
+    ↳ realistic_bisex_runs/      : Outputs incorporating ecological realism (e.g. overlapping generations, larval carryover)
+    ↳ actual_bisex_runs/         : Outputs based on mathematically idealised assumptions (discrete generations, no larval population)
+    ↳ dataframe/                 : Contains aggregated or summarised output tables (e.g. combined time series) for downstream analysis and figure generation.
+
+- two_loci/
+    ↳ realistic_two_loci/      : Realistic simulations of the two-locus (split-drive) MEREA system
+    ↳ actual_two_loci/         : Idealised simulations of the two-locus system
+    ↳ dataframe/               : Dataframe of two locus system
+
+Note:
+The distinction between `actual_run` and `realistic_run` follows the modelling framework described in the report: 'actual' refers to idealised, deterministic models without ecological complexity; 'realistic' includes features like persistent larval populations and temporal release schedules.
